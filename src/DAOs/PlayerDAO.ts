@@ -12,7 +12,7 @@ export class PlayerDAO extends DAO{
 
     public playerExists(playerID: string) : q.Promise<boolean>{
         let defer = q.defer<boolean>();
-        let sql = `SELECT TOP 1 * 
+        let sql = `SELECT * 
                     FROM players
                     WHERE playerid = ?`
 

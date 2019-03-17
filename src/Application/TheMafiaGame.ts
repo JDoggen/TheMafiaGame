@@ -7,6 +7,7 @@ import { GuildController } from '../Controllers/GuildController';
 import { GuildService } from '../Services/GuildService';
 import { PlayerService } from '../Services/PlayerService';
 import { IConstants } from '../Models/IConstants';
+import { CrimeController } from '../Controllers/CrimeControllers';
 const config = require('../../Config/config.json');
 const constants = require('../../Config/constants.json');
 
@@ -19,6 +20,7 @@ export class TheMafiaGame{
     private delegator : Delegator;
 
     private guildController : GuildController;
+    private crimeController : CrimeController;
 
     private playerService : PlayerService;
     private guildService: GuildService;
@@ -57,6 +59,7 @@ export class TheMafiaGame{
 
     private createControllers() : void{
         this.guildController = new GuildController(this.bot, this.guildService);
+        this.crimeController = new CrimeController(this.bot);
     }
 
     private createDelegator() : void{
