@@ -1,7 +1,7 @@
 import { DAO } from "./mysql/DAO";
 import * as q from 'q';
 import { IMySQLConfig } from "../Models/IMySQLconfig";
-import { IGuildDTO } from "./DataObjects/GuildDTO";
+import { IGuildDTO } from "./DataObjects/IGuildDTO";
 import { IConstants } from "../Models/IConstants";
 
 export class GuildDAO extends DAO{ 

@@ -1,6 +1,7 @@
 import { DAO } from "./mysql/DAO";
 import * as q from 'q';
 import { IConstants } from "../Models/IConstants";
+import { resolve } from "path";
 
 export class PlayerDAO extends DAO{ 
 
@@ -12,34 +13,38 @@ export class PlayerDAO extends DAO{
 
     public playerExists(playerID: string) : q.Promise<boolean>{
         let defer = q.defer<boolean>();
-        let sql = `SELECT * 
-                    FROM players
-                    WHERE playerid = ?`
+        let sql = `SELECT * `
+                    +`FROM themafiagame.players `
+                    +`WHERE playerid = ?`
 
         this.execute(sql, playerID)
         .then(
-            result =>{console.log("RESULT IN PLAYEREXISTS"); console.log(result)}
-        )
+            result =>{
+                if(result && result.length > 0) defer.resolve(true);
+                else defer.resolve(false);
+            })
         .catch(
-            err => {console.log("ERR IN PLAYEREXISTS"); console.log(err);}
-        )
+            err => {
+                defer.resolve(false);
+            })
         return defer.promise;
     }
 
-    public register(playerID: string) : q.Promise<any>{
-        let defer = q.defer<any>();
-        let sql = `INSERT INTO ? 
-                    (id)`
+    public register(playerID: string) : q.Promise<boolean>{
+        let defer = q.defer<boolean>();
+        let sql = `INSERT INTO themafiagame.players `
+                    + `(playerid) `
+                    + `VALUES `
+                    + `(?)`
         this.execute(sql, playerID)
         .then(
-            result => {console.log("RESULT IN REGISTER"); console.log(result);}
-        )
-        .catch(
-            err =>{console.log("ERROR IN REGISTER"); console.log(err);}
-        )
-
+            result => {
+                defer.resolve(true);
+        })
+        .catch(err =>{
+                defer.reject(err)
+        })
         return defer.promise;
-    }
-    
+    }   
 
 }

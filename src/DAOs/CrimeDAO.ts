@@ -11,7 +11,7 @@ export class CrimeDAO extends DAO{
         super();
     }
 
-    public fetchCrimePercentage(crime: Crimes, playerid: string): q.IPromise<number>{
+    public fetchCrimePercentage(crime: Crimes, playerid: string): q.Promise<number>{
         let defer = q.defer<number>();
         let crimeString;
         if(crime == Crimes.Pickpocket) crimeString = 'pickpocket';
@@ -19,9 +19,9 @@ export class CrimeDAO extends DAO{
         else if(crime == Crimes.Store) crimeString = 'store';
         else if(crime == Crimes.Bank) crimeString = 'bank';
 
-        let sql = `SELECT ? '
-                   + 'FROM crimes '
-                   + 'WHERE playerid = ?`
+        let sql = `SELECT ? `
+                   + `FROM themafiagame.crimes `
+                   + `WHERE playerid = ?`
 
         this.execute(sql, crimeString, playerid)
         .then(

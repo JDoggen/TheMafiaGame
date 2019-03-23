@@ -1,6 +1,6 @@
 import { GuildService } from "../Services/GuildService";
 import * as q from 'q';
-import { IGuildDTO } from "../DAOs/DataObjects/GuildDTO";
+import { IGuildDTO } from "../DAOs/DataObjects/IGuildDTO";
 import * as Discord from 'discord.js'
 import { Bot } from "../Application/Bot";
 

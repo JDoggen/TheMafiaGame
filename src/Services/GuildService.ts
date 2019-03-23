@@ -1,6 +1,6 @@
 import * as q from 'q';
 import { GuildDAO } from "../DAOs/GuildDAO";
-import { IGuildDTO } from '../DAOs/DataObjects/GuildDTO';
+import { IGuildDTO } from '../DAOs/DataObjects/IGuildDTO';
 
 export class GuildService{
 

@@ -28,7 +28,7 @@ export class DAO{
         if(err){throw err}
     }
 
-    public execute<T>(query: string, ...parameters: string[]) : q.Promise<T[]>{
+    public execute<T>(query: string, ...parameters: any[]) : q.Promise<T[]>{
         let defer = q.defer<T[]>();
         let queryOptions : mysql.QueryOptions = {
             sql : query,
