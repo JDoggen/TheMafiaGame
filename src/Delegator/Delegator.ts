@@ -72,9 +72,11 @@ export class Delegator{
                     this.access(command, playerid, channelid)
                     .then(
                         access =>{
+                            command = this.getVariation(command);
                             if(command === 'prefix' && argumentList[1]) {this.guildController.setPrefix(channel, guildid, argumentList[1])}
                             else if(command === 'start'){this.playerController.start(channelid, playerid)}
                             else if(command === 'commit' && argumentList[1] && access) {this.crimeController.commit(channelid, playerid, argumentList[1])}
+                            else if(command === `crimes` && access){this.crimeController.crimes(channelid, playerid)}
                     })
                 }
             }
@@ -100,5 +102,18 @@ export class Delegator{
             })
         }
         return defer.promise;
+    }
+
+    private getVariation(command: string): string{
+        switch(command){
+
+            case 'prefix':{ command = 'prefix'; break;}
+            case 'start': { command = 'start'; break; }
+            case 'comit': {}
+            case 'commit': { command = 'commit'; break; }
+            case 'crime' : {}
+            case 'crimes': { command = 'crimes'; break;}
+        }
+        return command;
     }
 }

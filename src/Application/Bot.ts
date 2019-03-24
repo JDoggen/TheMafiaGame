@@ -19,10 +19,24 @@ export class Bot{
 
     public sendMessage(channelid: string, message: string) : void{
         if(!channelid || !message) return;
-        let channel: Discord.Channel = this.client.channels.get(channelid)
+        let channel: Discord.Channel = this.client.channels.get(channelid);
         if(channel && channel.type == 'text'){
-            let TextChannel: Discord.TextChannel = channel as Discord.TextChannel;
-            TextChannel.send(message);
+            let textChannel: Discord.TextChannel = channel as Discord.TextChannel;
+            textChannel.send(message);
+        }
+    }
+
+    public sendEmbed(channelid: string, title: string, description: string, footer: string): void{
+        if(!channelid) return;
+        let channel: Discord.Channel = this.client.channels.get(channelid);
+        if(channel && channel.type == 'text'){
+            let textChannel: Discord.TextChannel = channel as Discord.TextChannel;
+            let embed: Discord.RichEmbed = new Discord.RichEmbed();
+            embed
+            .setTitle(title)
+            .setDescription(description)
+            .setFooter(footer);
+            textChannel.send(embed);   
         }
     }
 }

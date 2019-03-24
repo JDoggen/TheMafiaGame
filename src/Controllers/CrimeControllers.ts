@@ -22,12 +22,16 @@ export class CrimeController {
                 if(crimeEnum){
                     this.crimeService.commit(crimeEnum, playerid)
                     .then(crimeResult =>{
+                        console.log('crime result');
+                        console.log(crimeResult);
                         if(crimeResult.result){
-                            this.bot.sendMessage(channelid, `You succesfully commited the crime! You gained ${crimeResult.payout}.`)
+                            this.bot.sendMessage(channelid, `You succesfully commited the crime! You gained ${crimeResult.payout}.`);
                         } else if(crimeResult.jail){
                             this.bot.sendMessage(channelid, `You were unsuccesfull! You got caught by the cops, you were jailed for ${crimeResult.jailtime} seconds.`);
-                        } else{
-                            this.bot.sendMessage(channelid, `You were unsuccesfull! Luckily you didn't get caught!`)
+                        } else if(!crimeResult.rankHighEnough){
+                            this.bot.sendMessage(channelid, `You need to be a higher rank to attempt that crime!`);
+                        } else {
+                            this.bot.sendMessage(channelid, `You were unsuccesfull! Luckily you didn't get caught!`);
                         }
                     })
                     .catch(err =>{
@@ -37,6 +41,33 @@ export class CrimeController {
                     this.bot.sendMessage(channelid, `That is not a valid crime!`);
                 }
             } else{
+                this.bot.sendMessage(channelid, `You're still in jail! You need to another wait ${jailResult.timeleft} seconds.`)
+            }
+        })
+        .catch(err =>{
+            ErrorHandler.instance().handle(err, channelid);
+        })
+    }
+
+    public crimes(channelid: string, playerid: string){
+        this.jailService.jailInfo(playerid)
+        .then(jailResult =>{
+            if(!jailResult.isjailed){
+                this.crimeService.getCrimePercentages(playerid)
+                .then(crimePercentages =>{
+                    this.bot.sendEmbed(channelid, `Crimes`, 
+                    `*1*. Pickpocket a pedestrian. ${crimePercentages.pickpocket}%\n`
+                    + `*2*. Mug a pedestrian. ${crimePercentages.mug}%\n`
+                    + `*3*. Rob a store. ${crimePercentages.store}%\n`
+                    + `*4*. Rob a bank. ${crimePercentages.bank}%`
+                    , 
+                    `Use $commit x to attempt a crime.`)
+                })
+                .catch(err =>{
+                    ErrorHandler.instance().handle(err, channelid);
+                })
+            }
+            else {
                 this.bot.sendMessage(channelid, `You're still in jail! You need to another wait ${jailResult.timeleft} seconds.`)
             }
         })

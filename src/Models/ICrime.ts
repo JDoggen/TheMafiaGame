@@ -1,3 +1,5 @@
+import { Ranks } from "../Enums/Ranks";
+
 export interface ICrime{
     name: string;
     minPayout: number;
@@ -6,4 +8,6 @@ export interface ICrime{
     minJailtime: number;
     maxJailtime: number;
     maxRate: number;
+    rank: string;
+    rankEnum: Ranks
 }

@@ -36,7 +36,6 @@ export class JailDAO extends DAO{
                     + ` WHERE playerid = ?`
         this.execute(sql, playerid)
         .then(result =>{
-            console.log(result);
             let jailResult: IJailDTO = {} as IJailDTO;
             if(result && result.length > 0){
                 jailResult = result[0] as IJailDTO;

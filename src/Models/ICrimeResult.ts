@@ -3,4 +3,5 @@ export interface ICrimeResult{
     payout: number;
     jail: boolean;
     jailtime: number;
+    rankHighEnough: boolean;
 }

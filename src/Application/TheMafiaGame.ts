@@ -15,6 +15,7 @@ import { ErrorHandler } from '../Support/ErrorHandler';
 import { PlayerController } from '../Controllers/PlayerController';
 import { JailDAO } from '../DAOs/JailDAO';
 import { JailService } from '../Services/JailService';
+import { MainDAO } from '../DAOs/MainDAO';
 const config = require('../../Config/config.json');
 const constants = require('../../Config/constants.json');
 
@@ -35,7 +36,8 @@ export class TheMafiaGame{
     private crimeService: CrimeService;
     private jailService: JailService;
 
-    private playerDAO : PlayerDAO;
+    private mainDAO: MainDAO;
+    private playerDAO: PlayerDAO;
     private guildDAO: GuildDAO;
     private crimeDAO: CrimeDAO;
     private moneyDAO: MoneyDAO;
@@ -65,6 +67,7 @@ export class TheMafiaGame{
     
     private createDAOs() : void{
         console.log('Creating DAOs...');
+        this.mainDAO = new MainDAO(this.constants);
         this.playerDAO = new PlayerDAO(this.constants);
         this.guildDAO = new GuildDAO(this.constants);
         this.crimeDAO = new CrimeDAO(this.constants);
@@ -76,7 +79,7 @@ export class TheMafiaGame{
         console.log('Creating Services...');
         this.playerService = new PlayerService(this.playerDAO);
         this.guildService = new GuildService(this.guildDAO);
-        this.crimeService = new CrimeService(this.crimeDAO, this.moneyDAO, this.jailDAO);
+        this.crimeService = new CrimeService(this.playerDAO, this.crimeDAO, this.moneyDAO, this.jailDAO);
         this.jailService = new JailService(this.jailDAO);
     }
 
