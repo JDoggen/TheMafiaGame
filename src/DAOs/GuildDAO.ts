@@ -1,4 +1,4 @@
-import { DAO } from "./mysql/DAO";
+import { DAO } from "./DAO";
 import * as q from 'q';
 import { IMySQLConfig } from "../Models/IMySQLconfig";
 import { IGuildDTO } from "./DataObjects/IGuildDTO";

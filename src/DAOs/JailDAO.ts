@@ -1,4 +1,4 @@
-import { DAO } from "./mysql/DAO";
+import { DAO } from "./DAO";
 import { IConstants } from "../Models/IConstants";
 import * as q from 'q';
 import { IJailDTO } from "./DataObjects/IJailDTO";
