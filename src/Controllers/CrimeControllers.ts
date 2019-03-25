@@ -22,11 +22,11 @@ export class CrimeController {
                 if(crimeEnum){
                     this.crimeService.commit(crimeEnum, playerid)
                     .then(crimeResult =>{
-                        console.log('crime result');
-                        console.log(crimeResult);
                         if(crimeResult.result){
                             this.bot.sendMessage(channelid, `You succesfully commited the crime! You gained ${crimeResult.payout}.`);
-                        } else if(crimeResult.jail){
+                        } else if(!crimeResult.timerExpired){
+                            this.bot.sendMessage(channelid, `You still need to wait another ${crimeResult.timer} seconds before you can attempt another crime!`);
+                        }else if(crimeResult.jail){
                             this.bot.sendMessage(channelid, `You were unsuccesfull! You got caught by the cops, you were jailed for ${crimeResult.jailtime} seconds.`);
                         } else if(!crimeResult.rankHighEnough){
                             this.bot.sendMessage(channelid, `You need to be a higher rank to attempt that crime!`);

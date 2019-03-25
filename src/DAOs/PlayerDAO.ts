@@ -53,9 +53,6 @@ export class PlayerDAO extends DAO{
         let defer = q.defer<IPlayerDTO>();
         let sql = `SELECT * FROM themafiagame.players `
                     + `WHERE playerid = ? `;
-        //IMPLEMENT
-        //IMPLEMENT RANK IN DATABASE
-        //TRIGGER THAT SETS RANK ON UPDATE ON EXP
         this.execute(sql, playerID)
         .then(result =>{
             if(result && result[0]){
@@ -69,6 +66,21 @@ export class PlayerDAO extends DAO{
         .catch(err =>{
             defer.reject(err);
         });
+        return defer.promise;
+    }
+
+    public grantExperience(playerID: string, experience: number): q.Promise<boolean>{
+        let defer = q.defer<boolean>();
+        let sql = `UPDATE themafiagame.players `
+                    + `SET experience = experience + ? `
+                    + `WHERE playerid = ?`;
+        this.execute(sql, experience, playerID)
+        .then(result =>{
+            defer.resolve(true);
+        })
+        .catch(err =>{
+            defer.reject(err);
+        })
         return defer.promise;
     }
 

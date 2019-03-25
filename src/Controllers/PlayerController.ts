@@ -21,7 +21,7 @@ export class PlayerController{
                 this.bot.sendMessage(channelid, `It seems you're already registered!`);
             } 
             else{
-                this.bot.sendMessage(channelid, `Welcome! To help you get started, we sent you some helpfull commands!`);
+                this.bot.sendMessage(channelid, `Welcome! To help you get started, we sent you some helpful commands!`);
             }
         }) 
         .catch(err  =>{

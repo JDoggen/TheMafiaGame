@@ -10,10 +10,12 @@ import { ICrimeDTO } from '../DAOs/DataObjects/ICrimeDTO';
 import { Ranks } from '../Enums/Ranks';
 import { RanksSupport } from '../Support/RanksSupport';
 import { PlayerDAO } from '../DAOs/PlayerDAO';
+import { Logger } from '../Support/Logger';
 const crimeConfig = require('../../Config/crimes.json')
 
 export class CrimeService{
 
+    private readonly CRIME_TIMER = 120;
     private crimeConfig: ICrimeConfig;
 
     constructor(
@@ -27,34 +29,57 @@ export class CrimeService{
 
     public commit(crime: Crimes, playerid: string): q.Promise<ICrimeResult>{
         let defer = q.defer<ICrimeResult>();
-        this.playerDAO.fetchPlayerInfo(playerid)
-        .then(playerinfo =>{
-            console.log('playerinfo');
-            console.log(playerinfo);
-            let crimeInfo = this.getCrime(crime);
-            if(playerinfo.rankEnum >= crimeInfo.rankEnum){
-                this.crimeDAO.fetchCrimePercentage(crime, playerid)
-                .then(chance =>{
-                    let ran = Math.floor((Math.random() * 100) + 1);
-                    if(ran <= chance){
-                        this.payOut(playerid, crime)
-                        .then(result =>{
-                            result.rankHighEnough = true;
-                            defer.resolve(result);
+        this.crimeDAO.fetchCrimeTimer(playerid)
+        .then(timer =>{
+            if(timer - this.CRIME_TIMER > 0){
+                this.playerDAO.fetchPlayerInfo(playerid)
+                .then(playerinfo =>{
+                    let crimeInfo = this.getCrime(crime);
+                    if(playerinfo.rankEnum >= crimeInfo.rankEnum){
+                        this.crimeDAO.fetchCrimePercentage(crime, playerid)
+                        .then(chance =>{
+                            this.crimeDAO.updateCrimeTimer(playerid)
+                            .catch(err =>{
+                                defer.reject(err);
+                            })
+                            let ran = Math.floor((Math.random() * 100) + 1);
+                            if(ran <= chance){
+                                this.payOut(playerid, crime)
+                                .then(result =>{
+                                    result.rankHighEnough = true;
+                                    result.timerExpired = true;
+                                    defer.resolve(result);
+                                })
+                                .catch(err =>{
+                                    defer.reject(err);
+                                })
+                            }
+                            else{
+                                this.jail(playerid, crime)
+                                .then(result =>{
+                                    result.rankHighEnough = true;
+                                    result.timerExpired = true;
+                                    defer.resolve(result);
+                                })
+                                .catch(err =>{
+                                    defer.reject(err);
+                                })
+                            }
+                            this.grantExperience(playerid, crimeInfo.experience)
+                            .catch(err =>{
+                                Logger.instance().error(`Error while granting player[${playerid}] experience [${crimeInfo.experience}]`)
+                                Logger.instance().error(err);
+                            })
                         })
                         .catch(err =>{
                             defer.reject(err);
                         })
-                    }
-                    else{
-                        this.jail(playerid, crime)
-                        .then(result =>{
-                            result.rankHighEnough = true;
-                            defer.resolve(result);
-                        })
-                        .catch(err =>{
-                            defer.reject(err);
-                        })
+                    } else{
+                        let crimeResult = {} as ICrimeResult;
+                        crimeResult.rankHighEnough = false;
+                        crimeResult.jail = false;
+                        crimeResult.result = false;
+                        defer.resolve(crimeResult);
                     }
                 })
                 .catch(err =>{
@@ -62,7 +87,8 @@ export class CrimeService{
                 })
             } else{
                 let crimeResult = {} as ICrimeResult;
-                crimeResult.rankHighEnough = false;
+                crimeResult.timer = this.CRIME_TIMER - timer;
+                crimeResult.timerExpired = false;
                 crimeResult.jail = false;
                 crimeResult.result = false;
                 defer.resolve(crimeResult);
@@ -71,6 +97,7 @@ export class CrimeService{
         .catch(err =>{
             defer.reject(err);
         })
+            
         return defer.promise;
     }
 
@@ -114,14 +141,23 @@ export class CrimeService{
         crimeResult.jailtime = Math.floor(Math.random() * (jailMaxTime - jailMinTime)) + jailMinTime;
         crimeResult.payout = 0;
         crimeResult.result = false;
-        this.jailDAO.jail(playerid, crimeResult.jailtime)
-        .then(result =>{
+        if(crimeResult.jail){
+            this.jailDAO.jail(playerid, crimeResult.jailtime)
+            .then(result =>{
+                defer.resolve(crimeResult);
+            })
+            .catch(err=>{
+                defer.reject(err);
+            })
+        }
+        else{
             defer.resolve(crimeResult);
-        })
-        .catch(err=>{
-            defer.reject(err);
-        })
+        }
         return defer.promise;
+    }
+
+    private grantExperience(playerid: string, experience: number): q.Promise<boolean>{
+        return this.playerDAO.grantExperience(playerid, experience);
     }
 
 

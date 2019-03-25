@@ -4,4 +4,6 @@ export interface ICrimeResult{
     jail: boolean;
     jailtime: number;
     rankHighEnough: boolean;
+    timerExpired: boolean;
+    timer: number;
 }

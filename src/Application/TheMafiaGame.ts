@@ -16,6 +16,7 @@ import { PlayerController } from '../Controllers/PlayerController';
 import { JailDAO } from '../DAOs/JailDAO';
 import { JailService } from '../Services/JailService';
 import { MainDAO } from '../DAOs/MainDAO';
+import { Logger } from '../Support/Logger';
 const config = require('../../Config/config.json');
 const constants = require('../../Config/constants.json');
 
@@ -55,18 +56,18 @@ export class TheMafiaGame{
     }
 
     private readConfig() : IConfig{
-        console.log('Reading Config...');
+        Logger.instance().info('Reading Config...');
         return this.config = config as IConfig;
     }
 
     private readConstants() : IConstants{
-        console.log('Reading Constants...');
+        Logger.instance().info('Reading Constants...');
         return this.constants = constants as IConstants;
     }
 
     
     private createDAOs() : void{
-        console.log('Creating DAOs...');
+        Logger.instance().info('Creating DAOs...');
         this.mainDAO = new MainDAO(this.constants);
         this.playerDAO = new PlayerDAO(this.constants);
         this.guildDAO = new GuildDAO(this.constants);
@@ -76,7 +77,7 @@ export class TheMafiaGame{
     }
 
     private createServices() : void{
-        console.log('Creating Services...');
+        Logger.instance().info('Creating Services...');
         this.playerService = new PlayerService(this.playerDAO);
         this.guildService = new GuildService(this.guildDAO);
         this.crimeService = new CrimeService(this.playerDAO, this.crimeDAO, this.moneyDAO, this.jailDAO);
@@ -84,20 +85,20 @@ export class TheMafiaGame{
     }
 
     private createControllers() : void{
-        console.log('Creating Controllers...');
+        Logger.instance().info('Creating Controllers...');
         this.guildController = new GuildController(this.bot, this.guildService);
         this.crimeController = new CrimeController(this.bot, this.crimeService, this.jailService);
         this.playerController = new PlayerController(this.bot, this.playerService);
     }
 
     private createDelegator() : void{
-        console.log('Creating Delegator...');
+        Logger.instance().info('Creating Delegator...');
         this.delegator = new Delegator(this.bot, this.guildController, this.crimeController, this.playerController);
         this.bot.setDelegator(this.delegator);
     }
 
     private createSupports(): void{
-        console.log('Creating Support classes...');
+        Logger.instance().info('Creating Support classes...');
         ErrorHandler.instance().setBot(this.bot);
     }
 }

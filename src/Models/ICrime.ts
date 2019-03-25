@@ -9,5 +9,6 @@ export interface ICrime{
     maxJailtime: number;
     maxRate: number;
     rank: string;
-    rankEnum: Ranks
+    rankEnum: Ranks;
+    experience: number;
 }

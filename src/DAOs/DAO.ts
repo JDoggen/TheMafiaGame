@@ -2,7 +2,7 @@ import * as mysql from 'mysql';
 import { IMySQLConfig } from '../Models/IMySQLconfig';
 import * as q from 'q';
 
-const mysqlConfig = require('../../../Config/mysql.json');
+const mysqlConfig = require('../../Config/mysql.json');
 
 export class DAO{
 

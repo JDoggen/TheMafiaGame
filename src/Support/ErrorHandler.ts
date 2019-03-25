@@ -1,4 +1,5 @@
 import { Bot } from "../Application/Bot";
+import { Logger } from "./Logger";
 
 export class ErrorHandler{
 
@@ -16,7 +17,7 @@ export class ErrorHandler{
     }
 
     public handle(err: string, channelid: string){
-        console.log(err);
+        Logger.instance().error(err);
         this.bot.sendMessage(channelid, 'Something went wrong trying to run the command!');
     }
 

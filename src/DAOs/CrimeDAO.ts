@@ -59,4 +59,38 @@ export class CrimeDAO extends DAO{
         return defer.promise;
     }
 
+    public updateCrimeTimer(playerid: string): q.Promise<boolean>{
+        let defer = q.defer<boolean>();
+        let sql = `UPDATE themafiagame.crimes `
+                    + `SET lastattempt = ? `
+                    + `WHERE playerid = ? `;
+
+        this.execute(sql, new Date(), playerid)
+        .then(result =>{
+            defer.resolve(true);
+        })
+        .catch(err =>{
+            defer.reject(err);
+        })
+        return defer.promise;
+    }
+
+    public fetchCrimeTimer(playerid: string): q.Promise<number>{
+        let defer = q.defer<number>();
+        let sql = `SELECT TIME_TO_SEC(TIMEDIFF(NOW(), lastattempt)) AS timer `
+                    + `FROM themafiagame.crimes `
+                    + `WHERE playerid = ? `
+        this.execute<any>(sql, playerid)
+        .then(result =>{
+            if(result && result[0]){
+                defer.resolve(result[0].timer as number);
+            } else{
+                defer.reject(`Could not find crime timer for player[${playerid}]`)
+            }
+        })
+        .catch(err =>{
+            defer.reject(err);
+        })
+        return defer.promise;
+    }
 }
